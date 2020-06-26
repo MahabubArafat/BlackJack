@@ -138,8 +138,8 @@ while game:
             break
         elif com_card_value < 21:
             # num_creator()
-            printing_card(non_repeat[hitter - 1])
-            com_card_value = com_card_value + deck[non_repeat[hitter - 1]][2]
+            printing_card(non_repeat[hitter])
+            com_card_value = com_card_value + deck[non_repeat[hitter]][2]
             print(com_card_value)
             hitter += 1
             continue
