@@ -161,17 +161,26 @@ while main_game:
             num_creator()
         print("Com Dealer's cards:")
         printing_card(non_repeat[1])
-        printing_card(non_repeat[3])
+        # printing com card face down
+        print('-----------------')
+        print('|\t  \t|')
+        print('|\t  \t|')
+        print('|\t  \t|')
+        print('-----------------')
+
+        # not printing two cards but still counting the values to determine black jack, com card value and card will be revealed later
         com_card_value = deck[non_repeat[1]][2] + deck[non_repeat[3]][2]
-        print(f"Com Card Value : {com_card_value}")
         print("Human player cars:")
         printing_card(non_repeat[0])
         printing_card(non_repeat[2])
         human_card_value = deck[non_repeat[0]][2] + deck[non_repeat[2]][2]
         print(f'Human card value :{human_card_value}')
-        if human_card_value == 21:  # here i need to change a thing when com will not show his cards
+        if human_card_value == 21:  # here i need to change a thing when com will not show his cards #did the change
             if human_card_value == com_card_value == 21:
                 print("both hit black jack,so draw")
+                # when matter comes to decide black jack com card value will be revealed
+                printing_card(non_repeat[3])
+                print(f"Com Card Value : {com_card_value}")
                 game = False
                 com_game = False
             else:
@@ -181,6 +190,8 @@ while main_game:
                 game = False
         else:
             hit_stay(human_card_value)
+            printing_card(non_repeat[3])
+            print(f"Com Card Value : {com_card_value}")
         if com_card_value == 21 and com_card_value >= human_card_value:
             print("black  jack, com won")
             winner = 'com'
