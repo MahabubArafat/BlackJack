@@ -17,12 +17,16 @@ class Bet():
     def place_bet(self):
         global bet
         while True:
-            print("\r>>>>>>>>>>>> how much bet you want to place :", end=" ")
-            bet = int(input())
-            if bet <= self.human_bankroll:
-                break
-            else:
-                print("place a lower bet: ")
+            try:
+                print("\r>>>>>>>>>>>> how much bet you want to place :", end=" ")
+                bet = int(input())
+                if bet <= self.human_bankroll:
+                    break
+                else:
+                    print("place a lower bet: ")
+                    continue
+            except:
+                print(">>Enter The Amount of money you want to place as bet: ")
                 continue
 
     def selecting_winner(self, winner):
@@ -44,6 +48,9 @@ class Bet():
             print("Game Finished, Exiting Now")
             main_game = False
             # return main_game
+
+    def __str__(self):
+        return "your balance is : $"+str(self.human_bankroll)
 
 
 def deck_creation():
@@ -115,40 +122,43 @@ def hit_stay(card_value):
     global hitter, game, com_game, human_card_value, winner
     hitter = 4
     while True:
-        print("\r To hit type :y To stay type :n ", end=" ")
-        response = input()
-        if response.lower() == 'y':
-            printing_card(non_repeat[hitter])
-            if deck[non_repeat[hitter]][1] == 'ace':
-                print(
-                    "\rYou have an ace, Enter \"y\" to make it 1 or n to let it be 11 :", end=" ")
-                ace_decider = input()
-                if ace_decider.lower() == 'y':
-                    deck[non_repeat[hitter]][2] = 1
-                else:
-                    pass
-            card_value = card_value + deck[non_repeat[hitter]][2]
-            human_card_value = card_value  # returning the human_card_value
-            if card_value > 21:
-                print(f"Human card value : {card_value}")
-                print("Busted com won")
-                winner = 'com'
-                hitter += 1
-                game = False
-                com_game = False
+        try:
+            print("\r To hit type :y To stay type :n ", end=" ")
+            response = input()
+            if response.lower() == 'y':
+                printing_card(non_repeat[hitter])
+                if deck[non_repeat[hitter]][1] == 'ace':
+                    print(
+                        "\rYou have an ace, Enter \"y\" to make it 1 or \"n\" to let it be 11 :", end=" ")
+                    ace_decider = input()
+                    if ace_decider.lower() == 'y':
+                        deck[non_repeat[hitter]][2] = 1
+                    else:
+                        pass
+                card_value = card_value + deck[non_repeat[hitter]][2]
+                human_card_value = card_value  # returning the human_card_value
+                if card_value > 21:
+                    print(f"Human card value : {card_value}")
+                    print("Busted com won")
+                    winner = 'com'
+                    hitter += 1
+                    game = False
+                    com_game = False
+                    break
+                elif card_value == 21:
+                    print(card_value)
+                    print(f"Human card value : {card_value}")
+                    hitter += 1
+                    break
+                elif card_value < 21:
+                    print(f"Human card value : {card_value}")
+                    hitter += 1
+                    continue
+            elif response.lower() == 'n':
+                print("so you are staying and Now Computer's turn")
                 break
-            elif card_value == 21:
-                print(card_value)
-                print(f"Human card value : {card_value}")
-                hitter += 1
-                break
-            elif card_value < 21:
-                print(f"Human card value : {card_value}")
-                hitter += 1
-                continue
-        else:
-            print("so you are staying and Now Computer's turn")
-            break
+        except:
+            continue
 
 
 lets_bet = Bet()
@@ -156,6 +166,7 @@ while main_game:
     while game:
         deck = deck_creation()
         shuffling()
+        print(lets_bet)
         lets_bet.place_bet()
         for i in range(20):
             num_creator()
@@ -170,7 +181,7 @@ while main_game:
 
         # not printing two cards but still counting the values to determine black jack, com card value and card will be revealed later
         com_card_value = deck[non_repeat[1]][2] + deck[non_repeat[3]][2]
-        print("Human player cars:")
+        print("Human player cards:")
         printing_card(non_repeat[0])
         printing_card(non_repeat[2])
         human_card_value = deck[non_repeat[0]][2] + deck[non_repeat[2]][2]
@@ -179,6 +190,7 @@ while main_game:
             if human_card_value == com_card_value == 21:
                 print("both hit black jack,so draw")
                 # when matter comes to decide black jack com card value will be revealed
+                printing_card(non_repeat[1])
                 printing_card(non_repeat[3])
                 print(f"Com Card Value : {com_card_value}")
                 game = False
@@ -190,6 +202,8 @@ while main_game:
                 game = False
         else:
             hit_stay(human_card_value)
+            print("Revealing com cards........................................")
+            printing_card(non_repeat[1])
             printing_card(non_repeat[3])
             print(f"Com Card Value : {com_card_value}")
         if com_card_value == 21 and com_card_value >= human_card_value:
@@ -197,6 +211,7 @@ while main_game:
             winner = 'com'
             game = False
             continue
+
         while com_game:
             if com_card_value <= 21 and human_card_value < com_card_value:
                 print("com Won")
@@ -204,9 +219,11 @@ while main_game:
                 game = False
                 break
             elif com_card_value < 21:
+                print(
+                    "Now com will hit:.................................................")
                 printing_card(non_repeat[hitter])
                 com_card_value = com_card_value + deck[non_repeat[hitter]][2]
-                print(com_card_value)
+                print(f"Com card Value: {com_card_value}")
                 hitter += 1
                 continue
             elif com_card_value > 21 and human_card_value <= 21:
@@ -215,11 +232,15 @@ while main_game:
                 winner = 'human'
                 game = False
                 break
+            elif com_card_value == human_card_value == 21:
+                print("game drawed, Bank balance will be same")
+                game = False
+                break
 
     lets_bet.selecting_winner(winner)
     lets_bet.bankroll_check()
     if main_game == True:
-        print("\r wana play again ? type y to play again and type n to exit:", end=" ")
+        print("\r                  Wana play again ? type \"y\" to play again and type \"n\" to exit:", end=" ")
         response = input()
         if response.lower() == 'y':
             com_game = True
